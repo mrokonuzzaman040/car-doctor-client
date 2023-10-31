@@ -3,6 +3,7 @@ import img from '../../assets/images/login/login.svg'
 import { useContext } from 'react';
 import { AuthContext } from '../../providers/AuthProvider';
 import SocialLogin from '../Shared/SocialLogin/SocialLogin';
+import axios from 'axios';
 
 const Login = () => {
 
@@ -21,11 +22,18 @@ const Login = () => {
         signIn(email, password)
             .then(result => {
                 const user = result.user;
-                console.log(user);
-                navigate(from, { replace: true })
-
-                
-
+                // navigate(from, { replace: true })
+                // get access token from backend
+                const users = {email}
+                axios.post('http://localhost:5000/jwt', users, {withCredentials: true})
+                .then(res => {
+                    console.log(res.data)
+                    // localStorage.setItem('token', res.data)
+                    if(res.data.success){
+                        navigate(location?.state ? location?.state: '/')
+                    }
+                })
+                // .catch(err => console.log(err))
             })
             .catch(error => console.log(error));
     }

@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../providers/AuthProvider";
 import BookingRow from "./BookingRow";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Bookings = () => {
     const { user } = useContext(AuthContext);
@@ -10,22 +11,30 @@ const Bookings = () => {
 
     const url = `https://car-doctor-server-rust-seven.vercel.app/bookings?email=${user?.email}`;
     useEffect(() => {
-        fetch(url, {
-            method: 'GET', 
-            headers: {
-                authorization: `Bearer ${localStorage.getItem('car-access-token')}`
-            }
+
+        axios.get(url, {withCredentials: true})
+        .then(res => {
+            console.log(res.data)
+            setBookings(res.data)
+        
         })
-            .then(res => res.json())
-            .then(data => {
-                if(!data.error){
-                    setBookings(data)
-                }
-                else{
-                    // logout and then navigate
-                    navigate('/');
-                }
-            })
+
+        // fetch(url, {
+        //     method: 'GET', 
+        //     headers: {
+        //         authorization: `Bearer ${localStorage.getItem('car-access-token')}`
+        //     }
+        // })
+        //     .then(res => res.json())
+        //     .then(data => {
+        //         if(!data.error){
+        //             setBookings(data)
+        //         }
+        //         else{
+        //             // logout and then navigate
+        //             navigate('/');
+        //         }
+        //     })
     }, [url, navigate]);
 
     const handleDelete = id => {
